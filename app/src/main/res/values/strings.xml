@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Money Helper</string>
+    <string name="enable">enable</string>
+    <string name="disable">disable</string>
+    <string name="switch_to_back">switch to\nback</string>
+    <string name="switch_to_front">switch to\nfront</string>
+</resources>
