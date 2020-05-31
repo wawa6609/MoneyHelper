@@ -70,7 +70,7 @@ Java_com_example_moneyhelper_MainActivity_objectDetection(JNIEnv *env,
     vector<Mat> outs;
     net.forward(outs, getOutputNames(net));
     postprocess(mat, outs);
-    //cv::cvtColor(mat,mat,COLOR_BGR2RGBA);
+    cv::cvtColor(mat,mat,COLOR_BGR2RGBA);
 }
 }
 
@@ -82,7 +82,7 @@ Java_com_example_moneyhelper_MainActivity_returnFrame(JNIEnv *env,
 
     // get Mat from raw address
     Mat &mat = *(Mat *) matAddr;
-    cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
+    //cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
 }
 }
 
@@ -142,7 +142,7 @@ void postprocess(Mat& frame, const vector<Mat>& outs) {
 
 
 void drawPred(int classId, float conf, int startX, int startY, int endX, int endY, Mat& frame) {
-    rectangle(frame, Point(startX, startY), Point(endX, endY), color,8);
+    rectangle(frame, Point(startX, startY), Point(endX, endY), color,5);
     string label = format("%.2f", conf);
     if (!labels.empty()) {
         CV_Assert(classId < (int)labels.size());
@@ -150,9 +150,9 @@ void drawPred(int classId, float conf, int startX, int startY, int endX, int end
     }
 
     int baseLine;
-    Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 3, 1, &baseLine);
+    Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 1.5, 2, &baseLine);
     startY = max(startY, labelSize.height);
-    putText(frame, label, Point(startX, startY), FONT_HERSHEY_SIMPLEX, 3, color);
+    putText(frame, label, Point(startX, startY), FONT_HERSHEY_SIMPLEX, 1.5, color, 2);
 
 }
 
