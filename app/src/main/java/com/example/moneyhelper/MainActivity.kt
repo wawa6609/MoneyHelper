@@ -140,12 +140,12 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {
+        val labels=getPath("obj.names",this)
+        val weights=getPath("myown.weights",this)
+        val config=getPath("myown.cfg",this)
         //val labels=getPath("coco.names",this)
-        //val weights=getPath("myown.weights",this)
-        //val config=getPath("myown.cfg",this)
-        val labels=getPath("coco.names",this)
-        val weights=getPath("yolov3-tiny.weights",this)
-        val config=getPath("yolov3-tiny.cfg",this)
+        //val weights=getPath("yolov3-tiny.weights",this)
+        //val config=getPath("yolov3-tiny.cfg",this)
         initializeNet(labels,weights,config)
     }
 
