@@ -65,7 +65,7 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
         mOpenCvCameraView = findViewById<CameraBridgeViewBase>(R.id.main_surface)
 
-        mOpenCvCameraView!!.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT)
+        mOpenCvCameraView!!.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK)
 
         mOpenCvCameraView!!.visibility = SurfaceView.VISIBLE
 
