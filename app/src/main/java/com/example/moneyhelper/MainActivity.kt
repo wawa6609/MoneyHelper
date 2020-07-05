@@ -28,7 +28,7 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private var mOpenCvCameraView: CameraBridgeViewBase? = null
     private var enabled: Boolean = false
-    private var frontCam: Boolean = true
+    private var frontCam: Boolean = false
 
     private val mLoaderCallback = object : BaseLoaderCallback(this) {
         override fun onManagerConnected(status: Int) {
