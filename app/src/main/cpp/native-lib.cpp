@@ -33,10 +33,12 @@ void JNICALL
 Java_com_example_moneyhelper_MainActivity_initializeNet(JNIEnv *env,
                                                                         jobject instance,
                                                                         jstring names,
-                                                                        jstring weights
+                                                                        jstring weights,
+                                                                        jstring config
                                                                         ) {
     string labelsPath = env->GetStringUTFChars( names, NULL );
     string weightsPath = env->GetStringUTFChars( weights, NULL );
+    string configPath = env->GetStringUTFChars( config, NULL );
     string label;
 
     ifstream in(labelsPath);
@@ -48,7 +50,7 @@ Java_com_example_moneyhelper_MainActivity_initializeNet(JNIEnv *env,
     }
     color = CV_RGB(255, 0, 0);
     try {
-         net = dnn::readNetFromONNX(weightsPath);
+         net = dnn::readNetFromDarknet(configPath,weightsPath);
     }
     catch (std::exception const& ex) {
         __android_log_print(ANDROID_LOG_ERROR, "LOG", "%s", ex.what());

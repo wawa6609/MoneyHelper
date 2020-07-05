@@ -140,15 +140,15 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {
-        val labels=getPath("classes.txt",this)
-        val weights=getPath("myown.onnx",this)
-        //val labels=getPath("obj.names",this)
-        //val weights=getPath("myown.weights",this)
-        //val config=getPath("myown.cfg",this)
-        //val labels=getPath("coco.names",this)
-        //val weights=getPath("yolov3-tiny.weights",this)
-        //val config=getPath("yolov3-tiny.cfg",this)
-        initializeNet(labels,weights)
+//        val labels=getPath("classes.txt",this)
+//        val weights=getPath("myown.onnx",this)
+        val labels=getPath("obj.names",this)
+        val weights=getPath("myown.weights",this)
+        val config=getPath("myown.cfg",this)
+//        val labels=getPath("coco.names",this)
+//        val weights=getPath("yolov3-tiny.weights",this)
+//        val config=getPath("yolov3-tiny.cfg",this)
+        initializeNet(labels,weights, config)
     }
 
     override fun onCameraViewStopped() {}
@@ -191,7 +191,7 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private external fun objectDetection(matAddr: Long)
     private external fun returnFrame(matAddr: Long)
-    private external fun initializeNet(names:String?, weights:String?)
+    private external fun initializeNet(names:String?, weights:String?, config:String?)
 
     companion object {
 
