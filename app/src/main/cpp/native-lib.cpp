@@ -21,6 +21,8 @@ double nmsThreshold = 0.3;
 vector<string> labels;
 Scalar color;
 Net net;
+int startTime;
+double measTime;
 
 
 
@@ -68,14 +70,16 @@ Java_com_example_moneyhelper_MainActivity_objectDetection(JNIEnv *env,
 
     // get Mat from raw address
     Mat &mat = *(Mat *) matAddr;
-    cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
+    cv::cvtColor(mat,mat,COLOR_RGBA2RGB);
+//    cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
     Mat blob;
+//    startTime=clock();
     dnn::blobFromImage(mat, blob, 1 / 255.0, Size(416, 416), Scalar(0, 0, 0), true, false);
     net.setInput(blob);
     vector<Mat> outs;
     net.forward(outs, getOutputNames(net));
     postprocess(mat, outs);
-    cv::cvtColor(mat,mat,COLOR_BGR2RGBA);
+//    cv::cvtColor(mat,mat,COLOR_BGR2RGBA);
 }
 }
 
@@ -87,7 +91,7 @@ Java_com_example_moneyhelper_MainActivity_returnFrame(JNIEnv *env,
 
     // get Mat from raw address
     Mat &mat = *(Mat *) matAddr;
-    //cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
+    cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
 }
 }
 
@@ -143,6 +147,8 @@ void postprocess(Mat& frame, const vector<Mat>& outs) {
         Rect box = boxes[idx];
         drawPred(classIds[idx], confidences[idx], box.x, box.y, box.x + box.width, box.y + box.height, frame);
     }
+//    measTime=(clock()-startTime)/CLOCKS_PER_SEC;
+//    putText(frame,format("%.2f",measTime),Point(0,0),FONT_HERSHEY_SIMPLEX,1.2,color,2);
 }
 
 
