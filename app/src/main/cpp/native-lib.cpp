@@ -149,8 +149,8 @@ void postprocess(Mat& frame, const vector<Mat>& outs) {
         drawPred(classIds[idx], confidences[idx], box.x, box.y, box.x + box.width, box.y + box.height, frame);
     }
     measTime=(double)(clock()-startTime)/CLOCKS_PER_SEC;
-    fps=1/measTime;
-    string text=format("%.2f fps",fps);
+    fps=measTime*1000;
+    string text=format("%.1f ms",fps);
     int baseLine;
     int startX=15, startY=15;
     Size labelSize = getTextSize(text, FONT_HERSHEY_SIMPLEX, 1.2, 2, &baseLine);

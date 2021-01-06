@@ -180,7 +180,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private fun getPath(file: String, context: Context): String? {
         val assetManager: AssetManager = context.getAssets()
-        var inputStream: BufferedInputStream? = null
+        lateinit var inputStream: BufferedInputStream
         try { // Read data from assets.
             inputStream = BufferedInputStream(assetManager.open(file))
             val data = ByteArray(inputStream.available())
