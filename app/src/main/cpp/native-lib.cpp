@@ -23,6 +23,7 @@ Scalar color;
 Net net;
 int startTime;
 double measTime;
+double fps;
 
 
 
@@ -32,11 +33,11 @@ void postprocess(Mat& frame, const vector<Mat>& outs);
 
 extern "C" {
 void JNICALL
-Java_com_example_moneyhelper_MainActivity_initializeNet(JNIEnv *env,
-                                                                        jobject instance,
-                                                                        jstring names,
-                                                                        jstring weights,
-                                                                        jstring config
+Java_com_example_moneyhelper_YoloActivity_initializeNet(JNIEnv *env,
+                                                        jobject instance,
+                                                        jstring names,
+                                                        jstring weights,
+                                                        jstring config
                                                                         ) {
     string labelsPath = env->GetStringUTFChars( names, NULL );
     string weightsPath = env->GetStringUTFChars( weights, NULL );
@@ -64,34 +65,34 @@ Java_com_example_moneyhelper_MainActivity_initializeNet(JNIEnv *env,
 
 extern "C" {
 void JNICALL
-Java_com_example_moneyhelper_MainActivity_objectDetection(JNIEnv *env,
-                                                                          jobject instance,
-                                                                          jlong matAddr) {
-
-    // get Mat from raw address
-    Mat &mat = *(Mat *) matAddr;
-    cv::cvtColor(mat,mat,COLOR_RGBA2RGB);
-//    cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
-    Mat blob;
-//    startTime=clock();
-    dnn::blobFromImage(mat, blob, 1 / 255.0, Size(416, 416), Scalar(0, 0, 0), true, false);
-    net.setInput(blob);
-    vector<Mat> outs;
-    net.forward(outs, getOutputNames(net));
-    postprocess(mat, outs);
-//    cv::cvtColor(mat,mat,COLOR_BGR2RGBA);
-}
-}
-
-extern "C" {
-void JNICALL
-Java_com_example_moneyhelper_MainActivity_returnFrame(JNIEnv *env,
+Java_com_example_moneyhelper_YoloActivity_objectDetection(JNIEnv *env,
                                                           jobject instance,
                                                           jlong matAddr) {
 
     // get Mat from raw address
     Mat &mat = *(Mat *) matAddr;
+//    cv::cvtColor(mat,mat,COLOR_RGBA2RGB);
     cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
+    Mat blob;
+    startTime=clock();
+    dnn::blobFromImage(mat, blob, 1 / 255.0, Size(416, 416), Scalar(0, 0, 0), true, false);
+    net.setInput(blob);
+    vector<Mat> outs;
+    net.forward(outs, getOutputNames(net));
+    postprocess(mat, outs);
+    cv::cvtColor(mat,mat,COLOR_BGR2RGBA);
+}
+}
+
+extern "C" {
+void JNICALL
+Java_com_example_moneyhelper_YoloActivity_returnFrame(JNIEnv *env,
+                                                      jobject instance,
+                                                      jlong matAddr) {
+
+    // get Mat from raw address
+    Mat &mat = *(Mat *) matAddr;
+//    cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
 }
 }
 
@@ -147,8 +148,14 @@ void postprocess(Mat& frame, const vector<Mat>& outs) {
         Rect box = boxes[idx];
         drawPred(classIds[idx], confidences[idx], box.x, box.y, box.x + box.width, box.y + box.height, frame);
     }
-//    measTime=(clock()-startTime)/CLOCKS_PER_SEC;
-//    putText(frame,format("%.2f",measTime),Point(0,0),FONT_HERSHEY_SIMPLEX,1.2,color,2);
+    measTime=(double)(clock()-startTime)/CLOCKS_PER_SEC;
+    fps=1/measTime;
+    string text=format("%.2f fps",fps);
+    int baseLine;
+    int startX=15, startY=15;
+    Size labelSize = getTextSize(text, FONT_HERSHEY_SIMPLEX, 1.2, 2, &baseLine);
+    startY = max(startY, labelSize.height);
+    putText(frame,text,Point(startX,startY),FONT_HERSHEY_SIMPLEX,1.2,CV_RGB(0,255,0),2);
 }
 
 
@@ -161,9 +168,9 @@ void drawPred(int classId, float conf, int startX, int startY, int endX, int end
     }
 
     int baseLine;
-    Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 1.5, 2, &baseLine);
+    Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 1.1, 2, &baseLine);
     startY = max(startY, labelSize.height);
-    putText(frame, label, Point(startX, startY), FONT_HERSHEY_SIMPLEX, 1.5, color, 2);
+    putText(frame, label, Point(startX, startY), FONT_HERSHEY_SIMPLEX, 1.1, color, 2);
 
 }
 

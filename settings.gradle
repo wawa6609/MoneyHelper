@@ -1,3 +1,6 @@
+include ':lib_interpreter'
+include ':lib_task_api'
+include ':tflite'
 rootProject.name='Money Helper'
 include ':app'
 include ':opencv'
