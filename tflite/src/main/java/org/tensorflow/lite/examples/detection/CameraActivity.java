@@ -65,12 +65,12 @@ public abstract class CameraActivity extends AppCompatActivity
   private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
   protected int previewWidth = 0;
   protected int previewHeight = 0;
-  private boolean debug = false;
+  private final boolean debug = false;
   private Handler handler;
   private HandlerThread handlerThread;
   private boolean useCamera2API;
   private boolean isProcessingFrame = false;
-  private byte[][] yuvBytes = new byte[3][];
+  private final byte[][] yuvBytes = new byte[3][];
   private int[] rgbBytes = null;
   private int yRowStride;
   private Runnable postInferenceCallback;
@@ -93,9 +93,9 @@ public abstract class CameraActivity extends AppCompatActivity
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     setContentView(R.layout.tfe_od_activity_camera);
-    Toolbar toolbar = findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
+//    Toolbar toolbar = findViewById(R.id.toolbar);
+//    setSupportActionBar(toolbar);
+//    getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     if (hasPermission()) {
       setFragment();

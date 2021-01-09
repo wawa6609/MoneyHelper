@@ -5,14 +5,17 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.AssetManager
+import android.os.Build
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
 import android.util.Log
 import android.view.SurfaceView
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.widget.SwitchCompat
+import androidx.core.app.ActivityCompat
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_yolo.*
 import org.opencv.android.BaseLoaderCallback
@@ -28,11 +31,23 @@ import java.io.IOException
 
 class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
-    private var mOpenCvCameraView: CameraBridgeViewBase? = null
-    private var enabled: Boolean = false
-    private var frontCam: Boolean = false
-    lateinit var enBtn: Button
-    lateinit var camBtn: Button
+    private lateinit var mOpenCvCameraView: CameraBridgeViewBase
+    private var enabled: Boolean = true
+//    private var frontCam: Boolean = false
+//    lateinit var enBtn: Button
+//    lateinit var camBtn: Button
+    private lateinit var bottomSheetLayout: LinearLayout
+    private lateinit var gestureLayout: LinearLayout
+    private lateinit var sheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    protected lateinit var frameValueTextView: TextView
+    protected lateinit var cropValueTextView:android.widget.TextView
+    protected lateinit var inferenceTimeTextView:android.widget.TextView
+    protected lateinit var bottomSheetArrowImageView: ImageView
+    private lateinit var plusImageView: ImageView
+    private lateinit var minusImageView:android.widget.ImageView
+    private lateinit var apiSwitchCompat: SwitchCompat
+    private lateinit var threadsTextView: TextView
 
 
     private val mLoaderCallback = object : BaseLoaderCallback(this) {
@@ -44,7 +59,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
                     // Load native library after(!) OpenCV initialization
                     System.loadLibrary("native-lib")
 
-                    mOpenCvCameraView!!.enableView()
+                    mOpenCvCameraView.enableView()
                 }
                 else -> {
                     super.onManagerConnected(status)
@@ -60,57 +75,113 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
         // Permissions for Android 6+
         ActivityCompat.requestPermissions(
-                this@YoloActivity,
-                arrayOf(Manifest.permission.CAMERA),
-                CAMERA_PERMISSION_REQUEST
+            this@YoloActivity,
+            arrayOf(Manifest.permission.CAMERA),
+            CAMERA_PERMISSION_REQUEST
         )
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.activity_yolo)
-        enBtn=findViewById(R.id.enBtn)
-        camBtn=findViewById(R.id.camBtn)
+//        enBtn=findViewById(R.id.enBtn)
+//        camBtn=findViewById(R.id.camBtn)
 
         mOpenCvCameraView = findViewById<CameraBridgeViewBase>(R.id.main_surface)
 
-        mOpenCvCameraView!!.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK)
+//        mOpenCvCameraView.setMaxFrameSize(480, 640);
 
-        mOpenCvCameraView!!.visibility = SurfaceView.VISIBLE
+        mOpenCvCameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK)
 
-        mOpenCvCameraView!!.setCvCameraViewListener(this)
+        mOpenCvCameraView.visibility = SurfaceView.VISIBLE
+
+        mOpenCvCameraView.setCvCameraViewListener(this)
+        threadsTextView = findViewById(R.id.threads)
+        plusImageView = findViewById(R.id.plus)
+        minusImageView = findViewById(R.id.minus)
+        apiSwitchCompat = findViewById(R.id.api_info_switch)
+        bottomSheetLayout = findViewById(R.id.bottom_sheet_layout)
+        gestureLayout = findViewById(R.id.gesture_layout)
+        sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
+        bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow)
+
+        val vto = gestureLayout.viewTreeObserver
+        vto.addOnGlobalLayoutListener(
+            object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                        gestureLayout.viewTreeObserver.removeGlobalOnLayoutListener(this)
+                    } else {
+                        gestureLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    }
+                    //                int width = bottomSheetLayout.getMeasuredWidth();
+                    val height = gestureLayout.measuredHeight
+                    sheetBehavior.peekHeight = height
+                }
+            })
+        sheetBehavior.isHideable = false
+
+        sheetBehavior.setBottomSheetCallback(
+            object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                        }
+                        BottomSheetBehavior.STATE_EXPANDED -> {
+                            bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_down)
+                        }
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up)
+                        }
+                        BottomSheetBehavior.STATE_DRAGGING -> {
+                        }
+                        BottomSheetBehavior.STATE_SETTLING -> bottomSheetArrowImageView.setImageResource(
+                            R.drawable.icn_chevron_up
+                        )
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            })
+
+        frameValueTextView = findViewById(R.id.frame_info)
+        cropValueTextView = findViewById(R.id.crop_info)
+        inferenceTimeTextView = findViewById(R.id.inference_info)
     }
 
-    fun enable(view: View){
-        if(enabled){
-            enBtn.setText(R.string.enable)
-            enabled=false
-        } else{
-            enBtn.setText(R.string.disable)
-            enabled=true
-        }
-    }
 
-    fun changeCam(view: View){
-        if(frontCam) {
-            mOpenCvCameraView!!.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK)
-            camBtn.setText(R.string.switch_to_front)
-            frontCam=false
-        } else{
-            mOpenCvCameraView!!.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT)
-            camBtn.setText(R.string.switch_to_back)
-            frontCam=true
-        }
 
-    }
+
+//    fun enable(view: View){
+//        if(enabled){
+//            enBtn.setText(R.string.enable)
+//            enabled=false
+//        } else{
+//            enBtn.setText(R.string.disable)
+//            enabled=true
+//        }
+//    }
+//
+//    fun changeCam(view: View){
+//        if(frontCam) {
+//            mOpenCvCameraView!!.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK)
+//            camBtn.setText(R.string.switch_to_front)
+//            frontCam=false
+//        } else{
+//            mOpenCvCameraView!!.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT)
+//            camBtn.setText(R.string.switch_to_back)
+//            frontCam=true
+//        }
+//
+//    }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
     ) {
         when (requestCode) {
             CAMERA_PERMISSION_REQUEST -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mOpenCvCameraView!!.setCameraPermissionGranted()
+                    mOpenCvCameraView.setCameraPermissionGranted()
                 } else {
                     val message = "Camera permission was not granted"
                     Log.e(TAG, message)
@@ -126,7 +197,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     override fun onPause() {
         super.onPause()
         if (mOpenCvCameraView != null)
-            mOpenCvCameraView!!.disableView()
+            mOpenCvCameraView.disableView()
     }
 
     override fun onResume() {
@@ -143,7 +214,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     override fun onDestroy() {
         super.onDestroy()
         if (mOpenCvCameraView != null)
-            mOpenCvCameraView!!.disableView()
+            mOpenCvCameraView.disableView()
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {
@@ -155,10 +226,10 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 //        val labels=getPath("coco.names",this)
 //        val weights=getPath("yolov4-tiny.weights",this)
 //        val config=getPath("yolov4-tiny.cfg",this)
-        val labels=getPath("obj.names",this)
-        val weights=getPath("custom_yolov4-tiny_best_107.weights",this)
-        val config=getPath("custom_yolov4-tiny.cfg",this)
-        initializeNet(labels,weights, config)
+        val labels=getPath("obj.names", this)
+        val weights=getPath("custom_yolov4-tiny_best_107.weights", this)
+        val config=getPath("custom_yolov4-tiny.cfg", this)
+        initializeNet(labels, weights, config)
     }
 
     override fun onCameraViewStopped() {}
@@ -179,7 +250,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     }
 
     private fun getPath(file: String, context: Context): String? {
-        val assetManager: AssetManager = context.getAssets()
+        val assetManager: AssetManager = context.assets
         lateinit var inputStream: BufferedInputStream
         try { // Read data from assets.
             inputStream = BufferedInputStream(assetManager.open(file))
@@ -187,12 +258,12 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
             inputStream.read(data)
             inputStream.close()
             // Create copy file in storage.
-            val outFile = File(context.getFilesDir(), file)
+            val outFile = File(context.filesDir, file)
             val os = FileOutputStream(outFile)
             os.write(data)
             os.close()
             // Return a path to file which may be read in common way.
-            return outFile.getAbsolutePath()
+            return outFile.absolutePath
         } catch (ex: IOException) {
             Log.i(TAG, "Failed to upload a file")
         }
@@ -201,7 +272,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private external fun objectDetection(matAddr: Long)
     private external fun returnFrame(matAddr: Long)
-    private external fun initializeNet(names:String?, weights:String?, config:String?)
+    private external fun initializeNet(names: String?, weights: String?, config: String?)
 
     companion object {
 
