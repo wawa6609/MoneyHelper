@@ -73,6 +73,7 @@ public abstract class CameraActivity extends AppCompatActivity
   private final byte[][] yuvBytes = new byte[3][];
   private int[] rgbBytes = null;
   private int yRowStride;
+  protected static final String model="";
   private Runnable postInferenceCallback;
   private Runnable imageConverter;
 
@@ -80,7 +81,9 @@ public abstract class CameraActivity extends AppCompatActivity
   private LinearLayout gestureLayout;
   private BottomSheetBehavior<LinearLayout> sheetBehavior;
 
-  protected TextView frameValueTextView, cropValueTextView, inferenceTimeTextView;
+  protected TextView frameValueTextView, cropValueTextView;
+  protected TextView inferenceTimeTextView, avgInferenceTimeTextView;
+  protected TextView modelTextView;
   protected ImageView bottomSheetArrowImageView;
   private SwitchCompat apiSwitchCompat;
 
@@ -157,6 +160,9 @@ public abstract class CameraActivity extends AppCompatActivity
     frameValueTextView = findViewById(R.id.frame_info);
     cropValueTextView = findViewById(R.id.crop_info);
     inferenceTimeTextView = findViewById(R.id.inference_info);
+    avgInferenceTimeTextView = findViewById(R.id.avginference_info);
+    modelTextView=findViewById(R.id.model_info);
+    showModel(model);
 
     apiSwitchCompat.setOnCheckedChangeListener(this);
   }
@@ -510,16 +516,24 @@ public abstract class CameraActivity extends AppCompatActivity
   protected void showInference(String inferenceTime) {
     inferenceTimeTextView.setText(inferenceTime);
   }
+  protected void showAvgInference(String avgInferenceTime) {
+    avgInferenceTimeTextView.setText(avgInferenceTime);
+  }
+  protected void showModel(String model){
+    modelTextView.setText(model);
+  }
 
   protected abstract void processImage();
 
   protected abstract void onPreviewSizeChosen(final Size size, final int rotation);
 
+  protected void setNumThreads(final int numThreads) {
+
+  }
+
   protected abstract int getLayoutId();
 
   protected abstract Size getDesiredPreviewFrameSize();
-
-  protected abstract void setNumThreads(int numThreads);
 
   protected abstract void setUseNNAPI(boolean isChecked);
 }

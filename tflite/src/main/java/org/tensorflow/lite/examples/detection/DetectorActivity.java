@@ -55,6 +55,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
   private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
   private static final String TF_OD_API_LABELS_FILE = "labels.txt";
+  protected static final String model="SSD";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
   // Minimum detection confidence to track a detection.
   private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
@@ -68,6 +69,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private Detector detector;
 
   private long lastProcessingTimeMs;
+  private long totalProcessingTimeMs;
+  private long totalDetections=0;
+  private double avgProcessingTimeMs=0;
   private Bitmap rgbFrameBitmap = null;
   private Bitmap croppedBitmap = null;
   private Bitmap cropCopyBitmap = null;
@@ -133,7 +137,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     cropToFrameTransform = new Matrix();
     frameToCropTransform.invert(cropToFrameTransform);
 
-    trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
+    trackingOverlay = findViewById(R.id.tracking_overlay);
     trackingOverlay.addCallback(
             new DrawCallback() {
               @Override
@@ -146,6 +150,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             });
 
     tracker.setFrameConfiguration(previewWidth, previewHeight, sensorOrientation);
+    showModel(model);
   }
 
   @Override
@@ -180,7 +185,11 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 LOGGER.i("Running detection on image " + currTimestamp);
                 final long startTime = SystemClock.uptimeMillis();
                 final List<Detector.Recognition> results = detector.recognizeImage(croppedBitmap);
+                totalDetections++;
                 lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
+                totalProcessingTimeMs+=lastProcessingTimeMs;
+                avgProcessingTimeMs=totalProcessingTimeMs/totalDetections;
+
 
                 cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
                 final Canvas canvas = new Canvas(cropCopyBitmap);
@@ -223,6 +232,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                             showFrameInfo(previewWidth + "x" + previewHeight);
                             showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
                             showInference(lastProcessingTimeMs + " ms");
+                            showAvgInference(avgProcessingTimeMs+" ms");
                           }
                         });
               }
