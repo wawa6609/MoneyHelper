@@ -238,20 +238,25 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
         
         // native call to process current camera frame
-        if((angle==180) or (angle==270)){
-            if(enabled){
-                objectDetection(mat.nativeObjAddr, true)
-            } else{
-                returnFrame(mat.nativeObjAddr, true)
-            }
+        if(enabled){
+            objectDetection(mat.nativeObjAddr, angle)
+        } else{
+            returnFrame(mat.nativeObjAddr, angle)
         }
-        else{
-            if(enabled){
-                objectDetection(mat.nativeObjAddr, false)
-            } else{
-                returnFrame(mat.nativeObjAddr, false)
-            }
-        }
+//        if((angle==180) || (angle==270)){
+//            if(enabled){
+//                objectDetection(mat.nativeObjAddr, true)
+//            } else{
+//                returnFrame(mat.nativeObjAddr, true)
+//            }
+//        }
+//        else{
+//            if(enabled){
+//                objectDetection(mat.nativeObjAddr, false)
+//            } else{
+//                returnFrame(mat.nativeObjAddr, false)
+//            }
+//        }
 
 
         // return processed frame for live preview
@@ -288,8 +293,8 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         }
     }
 
-    private external fun objectDetection(matAddr: Long, flip: Boolean)
-    private external fun returnFrame(matAddr: Long, flip: Boolean)
+    private external fun objectDetection(matAddr: Long, angle: Int)
+    private external fun returnFrame(matAddr: Long, angle: Int)
     private external fun initializeNet(names: String?, weights: String?, config: String?)
 
     companion object {

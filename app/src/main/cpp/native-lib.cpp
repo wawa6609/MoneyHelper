@@ -67,13 +67,17 @@ extern "C" {
 void JNICALL
 Java_com_example_moneyhelper_YoloActivity_objectDetection(JNIEnv *env,
                                                           jobject instance,
-                                                          jlong matAddr, jboolean flip) {
+                                                          jlong matAddr, jint angle) {
 
     // get Mat from raw address
     Mat &mat = *(Mat *) matAddr;
-    if(flip){
-        cv::flip(mat,mat,1);
+    if(angle==270) {
+        cv::rotate(mat,mat,cv::ROTATE_180);
+//        cv::flip(mat, mat, 0);
     }
+//    } else if(angle==180){
+//        cv::flip(mat,mat,1);
+//    }
 //    cv::cvtColor(mat,mat,COLOR_RGBA2RGB);
     cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
     Mat blob;
@@ -91,12 +95,14 @@ extern "C" {
 void JNICALL
 Java_com_example_moneyhelper_YoloActivity_returnFrame(JNIEnv *env,
                                                       jobject instance,
-                                                      jlong matAddr, jboolean flip) {
+                                                      jlong matAddr, jint angle) {
 
     // get Mat from raw address
     Mat &mat = *(Mat *) matAddr;
-    if(flip){
+    if(angle==270){
         cv::flip(mat,mat,1);
+    } else if(angle==180){
+        cv::flip(mat,mat,0);
     }
 //    cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
 }
