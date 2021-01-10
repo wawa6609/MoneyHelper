@@ -221,7 +221,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                           public void run() {
                             showFrameInfo(previewWidth + "x" + previewHeight);
                             showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-                            showInference(lastProcessingTimeMs + "ms");
+                            showInference(lastProcessingTimeMs + " ms");
                           }
                         });
               }

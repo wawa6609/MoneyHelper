@@ -243,21 +243,11 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         } else{
             returnFrame(mat.nativeObjAddr, angle)
         }
-//        if((angle==180) || (angle==270)){
-//            if(enabled){
-//                objectDetection(mat.nativeObjAddr, true)
-//            } else{
-//                returnFrame(mat.nativeObjAddr, true)
-//            }
-//        }
-//        else{
-//            if(enabled){
-//                objectDetection(mat.nativeObjAddr, false)
-//            } else{
-//                returnFrame(mat.nativeObjAddr, false)
-//            }
-//        }
-
+        runOnUiThread {
+            showFrameInfo(getPrevSize())
+            showCropInfo(getDetSize())
+            showInference(getInfTime())
+        }
 
         // return processed frame for live preview
         return mat
@@ -293,9 +283,25 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         }
     }
 
+    protected fun showFrameInfo(frameInfo: String?) {
+        frameValueTextView.text = frameInfo
+    }
+
+    protected fun showCropInfo(cropInfo: String?) {
+        cropValueTextView.text = cropInfo
+    }
+
+    protected fun showInference(inferenceTime: String?) {
+        inferenceTimeTextView.text = inferenceTime
+    }
+
     private external fun objectDetection(matAddr: Long, angle: Int)
     private external fun returnFrame(matAddr: Long, angle: Int)
     private external fun initializeNet(names: String?, weights: String?, config: String?)
+    private external fun getPrevSize():String
+    private external fun getDetSize():String
+    private external fun getInfTime():String
+
 
     companion object {
 

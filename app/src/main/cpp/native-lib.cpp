@@ -23,7 +23,10 @@ Scalar color;
 Net net;
 int startTime;
 double measTime;
-double fps;
+double infTime;
+
+Size prevSize(640,480);
+Size detSize(416,416);
 
 
 
@@ -71,6 +74,7 @@ Java_com_example_moneyhelper_YoloActivity_objectDetection(JNIEnv *env,
 
     // get Mat from raw address
     Mat &mat = *(Mat *) matAddr;
+    prevSize=Size(mat.cols, mat.rows);
     if(angle==270) {
         cv::rotate(mat,mat,cv::ROTATE_180);
     }
@@ -79,7 +83,7 @@ Java_com_example_moneyhelper_YoloActivity_objectDetection(JNIEnv *env,
     cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
     Mat blob;
     startTime=clock();
-    dnn::blobFromImage(mat, blob, 1 / 255.0, Size(416, 416), Scalar(0, 0, 0), true, false);
+    dnn::blobFromImage(mat, blob, 1 / 255.0, detSize, Scalar(0, 0, 0), true, false);
     net.setInput(blob);
     vector<Mat> outs;
     net.forward(outs, getOutputNames(net));
@@ -156,13 +160,7 @@ void postprocess(Mat& frame, const vector<Mat>& outs) {
         drawPred(classIds[idx], confidences[idx], box.x, box.y, box.x + box.width, box.y + box.height, frame);
     }
     measTime=(double)(clock()-startTime)/CLOCKS_PER_SEC;
-    fps=measTime*1000;
-    string text=format("%.1f ms",fps);
-    int baseLine;
-    int startX=15, startY=15;
-    Size labelSize = getTextSize(text, FONT_HERSHEY_SIMPLEX, 1.2, 2, &baseLine);
-    startY = max(startY, labelSize.height);
-    putText(frame,text,Point(startX,startY),FONT_HERSHEY_SIMPLEX,1.2,CV_RGB(0,255,0),2);
+    infTime= measTime * 1000;
 }
 
 
@@ -182,3 +180,25 @@ void drawPred(int classId, float conf, int startX, int startY, int endX, int end
 }
 
 
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_example_moneyhelper_YoloActivity_getPrevSize(JNIEnv *env, jobject thiz) {
+    char prevSizeString[10];
+    sprintf(prevSizeString,"%dx%d",prevSize.width,prevSize.height);
+    return (*env).NewStringUTF(prevSizeString);
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_example_moneyhelper_YoloActivity_getDetSize(JNIEnv *env, jobject thiz) {
+    char detSizeString[10];
+    sprintf(detSizeString,"%dx%d",detSize.width,detSize.height);
+    return (*env).NewStringUTF(detSizeString);
+}
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_example_moneyhelper_YoloActivity_getInfTime(JNIEnv *env, jobject thiz) {
+    char infTimeString[10];
+    sprintf(infTimeString,"%.1f ms",infTime);
+    return (*env).NewStringUTF(infTimeString);
+}
