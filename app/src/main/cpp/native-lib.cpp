@@ -199,6 +199,6 @@ extern "C"
 JNIEXPORT jstring JNICALL
 Java_com_example_moneyhelper_YoloActivity_getInfTime(JNIEnv *env, jobject thiz) {
     char infTimeString[10];
-    sprintf(infTimeString,"%.1f ms",infTime);
+    sprintf(infTimeString,"%.0f ms",infTime);
     return (*env).NewStringUTF(infTimeString);
 }

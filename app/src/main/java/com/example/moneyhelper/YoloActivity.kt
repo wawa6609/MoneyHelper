@@ -91,9 +91,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         mOpenCvCameraView.visibility = SurfaceView.VISIBLE
 
         mOpenCvCameraView.setCvCameraViewListener(this)
-        threadsTextView = findViewById(R.id.threads)
-        plusImageView = findViewById(R.id.plus)
-        minusImageView = findViewById(R.id.minus)
+
         apiSwitchCompat = findViewById(R.id.api_info_switch)
         bottomSheetLayout = findViewById(R.id.bottom_sheet_layout)
         gestureLayout = findViewById(R.id.gesture_layout)
