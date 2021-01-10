@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
-        android:text="Porównanie sieci do detekcji obiektów"
+        android:text="Porównanie sieci do detekcji monet"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
