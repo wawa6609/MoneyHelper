@@ -8,10 +8,7 @@ import android.content.res.AssetManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.SurfaceView
-import android.view.View
-import android.view.ViewTreeObserver
-import android.view.WindowManager
+import android.view.*
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.ActivityCompat
@@ -237,13 +234,25 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     override fun onCameraFrame(frame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
         // get current camera frame as OpenCV Mat object
         val mat = frame.rgba()
+        val angle=getScreenOrientation()
 
+        
         // native call to process current camera frame
-        if(enabled){
-            objectDetection(mat.nativeObjAddr)
-        } else{
-            returnFrame(mat.nativeObjAddr)
+        if((angle==180) or (angle==270)){
+            if(enabled){
+                objectDetection(mat.nativeObjAddr, true)
+            } else{
+                returnFrame(mat.nativeObjAddr, true)
+            }
         }
+        else{
+            if(enabled){
+                objectDetection(mat.nativeObjAddr, false)
+            } else{
+                returnFrame(mat.nativeObjAddr, false)
+            }
+        }
+
 
         // return processed frame for live preview
         return mat
@@ -270,8 +279,17 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         return ""
     }
 
-    private external fun objectDetection(matAddr: Long)
-    private external fun returnFrame(matAddr: Long)
+    protected fun getScreenOrientation(): Int {
+        return when (windowManager.defaultDisplay.rotation) {
+            Surface.ROTATION_270 -> 270
+            Surface.ROTATION_180 -> 180
+            Surface.ROTATION_90 -> 90
+            else -> 0
+        }
+    }
+
+    private external fun objectDetection(matAddr: Long, flip: Boolean)
+    private external fun returnFrame(matAddr: Long, flip: Boolean)
     private external fun initializeNet(names: String?, weights: String?, config: String?)
 
     companion object {

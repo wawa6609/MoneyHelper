@@ -67,10 +67,13 @@ extern "C" {
 void JNICALL
 Java_com_example_moneyhelper_YoloActivity_objectDetection(JNIEnv *env,
                                                           jobject instance,
-                                                          jlong matAddr) {
+                                                          jlong matAddr, jboolean flip) {
 
     // get Mat from raw address
     Mat &mat = *(Mat *) matAddr;
+    if(flip){
+        cv::flip(mat,mat,1);
+    }
 //    cv::cvtColor(mat,mat,COLOR_RGBA2RGB);
     cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
     Mat blob;
@@ -88,10 +91,13 @@ extern "C" {
 void JNICALL
 Java_com_example_moneyhelper_YoloActivity_returnFrame(JNIEnv *env,
                                                       jobject instance,
-                                                      jlong matAddr) {
+                                                      jlong matAddr, jboolean flip) {
 
     // get Mat from raw address
     Mat &mat = *(Mat *) matAddr;
+    if(flip){
+        cv::flip(mat,mat,1);
+    }
 //    cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
 }
 }
