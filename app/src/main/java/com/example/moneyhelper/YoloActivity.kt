@@ -20,7 +20,6 @@ import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Mat
-import org.tensorflow.lite.examples.detection.CameraActivity
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -44,6 +43,9 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     protected lateinit var inferenceTimeTextView: TextView
     protected lateinit  var avgInferenceTimeTextView: TextView
     protected lateinit var modelTextView: TextView
+    protected lateinit var infNumberTextView: TextView
+
+
     protected lateinit var bottomSheetArrowImageView: ImageView
     private lateinit var apiSwitchCompat: SwitchCompat
 
@@ -142,6 +144,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         inferenceTimeTextView = findViewById(R.id.inference_info)
         avgInferenceTimeTextView = findViewById(R.id.avginference_info)
         modelTextView = findViewById(R.id.model_info)
+        infNumberTextView=findViewById(R.id.inf_number_info)
         showModel(model)
     }
 
@@ -249,6 +252,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
             showCropInfo(getDetSize())
             showInference(getInfTime())
             showAvgInference(getAvgInfTime())
+            showInfNum(getInfNum())
         }
 
         // return processed frame for live preview
@@ -305,6 +309,10 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         modelTextView.setText(model)
     }
 
+    protected fun showInfNum(infNum:String?){
+        infNumberTextView.setText(infNum)
+    }
+
     private external fun objectDetection(matAddr: Long, angle: Int)
     private external fun returnFrame(matAddr: Long, angle: Int)
     private external fun initializeNet(names: String?, weights: String?, config: String?)
@@ -312,7 +320,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     private external fun getDetSize():String
     private external fun getInfTime():String
     private external fun getAvgInfTime():String
-
+    private external fun getInfNum():String
 
     companion object {
 

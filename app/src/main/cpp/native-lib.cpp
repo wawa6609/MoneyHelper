@@ -212,6 +212,12 @@ Java_com_example_moneyhelper_YoloActivity_getInfTime(JNIEnv *env, jobject thiz) 
 JNIEXPORT jstring JNICALL
 Java_com_example_moneyhelper_YoloActivity_getAvgInfTime(JNIEnv *env, jobject thiz) {
     char avgInfTimeString[10];
-    sprintf(avgInfTimeString, "%.0f ms", avgInfTime);
+    sprintf(avgInfTimeString, "%.1f ms", avgInfTime);
     return (*env).NewStringUTF(avgInfTimeString);
+}extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_example_moneyhelper_YoloActivity_getInfNum(JNIEnv *env, jobject thiz) {
+    char totalInfNumberString[10];
+    sprintf(totalInfNumberString, "%d", totalInfNumber);
+    return (*env).NewStringUTF(totalInfNumberString);
 }

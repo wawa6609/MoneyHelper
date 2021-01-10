@@ -83,6 +83,7 @@ public abstract class CameraActivity extends AppCompatActivity
 
   protected TextView frameValueTextView, cropValueTextView;
   protected TextView inferenceTimeTextView, avgInferenceTimeTextView;
+  protected TextView infNumberTextView;
   protected TextView modelTextView;
   protected ImageView bottomSheetArrowImageView;
   private SwitchCompat apiSwitchCompat;
@@ -162,6 +163,7 @@ public abstract class CameraActivity extends AppCompatActivity
     inferenceTimeTextView = findViewById(R.id.inference_info);
     avgInferenceTimeTextView = findViewById(R.id.avginference_info);
     modelTextView=findViewById(R.id.model_info);
+    infNumberTextView=findViewById(R.id.inf_number_info);
     showModel(model);
 
     apiSwitchCompat.setOnCheckedChangeListener(this);
@@ -521,6 +523,10 @@ public abstract class CameraActivity extends AppCompatActivity
   }
   protected void showModel(String model){
     modelTextView.setText(model);
+  }
+
+  protected void showInfNum(String infNum){
+    infNumberTextView.setText(infNum);
   }
 
   protected abstract void processImage();

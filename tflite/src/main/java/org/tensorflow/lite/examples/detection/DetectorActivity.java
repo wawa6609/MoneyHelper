@@ -70,7 +70,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private long lastProcessingTimeMs;
   private long totalProcessingTimeMs;
-  private long totalDetections=0;
+  private long infNumber =0;
   private double avgProcessingTimeMs=0;
   private Bitmap rgbFrameBitmap = null;
   private Bitmap croppedBitmap = null;
@@ -185,10 +185,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 LOGGER.i("Running detection on image " + currTimestamp);
                 final long startTime = SystemClock.uptimeMillis();
                 final List<Detector.Recognition> results = detector.recognizeImage(croppedBitmap);
-                totalDetections++;
+                infNumber++;
                 lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
                 totalProcessingTimeMs+=lastProcessingTimeMs;
-                avgProcessingTimeMs=totalProcessingTimeMs/totalDetections;
+                avgProcessingTimeMs=totalProcessingTimeMs/ infNumber;
 
 
                 cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
@@ -233,6 +233,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                             showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
                             showInference(lastProcessingTimeMs + " ms");
                             showAvgInference(avgProcessingTimeMs+" ms");
+                            showInfNum(infNumber+"");
                           }
                         });
               }
