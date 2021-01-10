@@ -20,6 +20,7 @@ import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Mat
+import org.tensorflow.lite.examples.detection.CameraActivity
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -28,6 +29,7 @@ import java.io.IOException
 
 class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
+    private val model="YOLOv4-tiny"
     private lateinit var mOpenCvCameraView: CameraBridgeViewBase
     private var enabled: Boolean = true
 //    private var frontCam: Boolean = false
@@ -38,13 +40,12 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     private lateinit var sheetBehavior: BottomSheetBehavior<LinearLayout>
 
     protected lateinit var frameValueTextView: TextView
-    protected lateinit var cropValueTextView:android.widget.TextView
-    protected lateinit var inferenceTimeTextView:android.widget.TextView
+    protected lateinit  var cropValueTextView: TextView
+    protected lateinit var inferenceTimeTextView: TextView
+    protected lateinit  var avgInferenceTimeTextView: TextView
+    protected lateinit var modelTextView: TextView
     protected lateinit var bottomSheetArrowImageView: ImageView
-    private lateinit var plusImageView: ImageView
-    private lateinit var minusImageView:android.widget.ImageView
     private lateinit var apiSwitchCompat: SwitchCompat
-    private lateinit var threadsTextView: TextView
 
 
     private val mLoaderCallback = object : BaseLoaderCallback(this) {
@@ -84,7 +85,6 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
         mOpenCvCameraView = findViewById<CameraBridgeViewBase>(R.id.main_surface)
 
-//        mOpenCvCameraView.setMaxFrameSize(480, 640);
 
         mOpenCvCameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK)
 
@@ -140,6 +140,9 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         frameValueTextView = findViewById(R.id.frame_info)
         cropValueTextView = findViewById(R.id.crop_info)
         inferenceTimeTextView = findViewById(R.id.inference_info)
+        avgInferenceTimeTextView = findViewById(R.id.avginference_info)
+        modelTextView = findViewById(R.id.model_info)
+        showModel(model)
     }
 
 
@@ -245,6 +248,7 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
             showFrameInfo(getPrevSize())
             showCropInfo(getDetSize())
             showInference(getInfTime())
+            showAvgInference(getAvgInfTime())
         }
 
         // return processed frame for live preview
@@ -293,12 +297,21 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         inferenceTimeTextView.text = inferenceTime
     }
 
+    protected fun showAvgInference(avgInferenceTime: String?) {
+        avgInferenceTimeTextView.setText(avgInferenceTime)
+    }
+
+    protected fun showModel(model: String?) {
+        modelTextView.setText(model)
+    }
+
     private external fun objectDetection(matAddr: Long, angle: Int)
     private external fun returnFrame(matAddr: Long, angle: Int)
     private external fun initializeNet(names: String?, weights: String?, config: String?)
     private external fun getPrevSize():String
     private external fun getDetSize():String
     private external fun getInfTime():String
+    private external fun getAvgInfTime():String
 
 
     companion object {

@@ -24,6 +24,10 @@ Net net;
 int startTime;
 double measTime;
 double infTime;
+double avgInfTime=0;
+double totalInfTime=0;
+int totalInfNumber=0;
+
 
 Size prevSize(640,480);
 Size detSize(416,416);
@@ -154,13 +158,16 @@ void postprocess(Mat& frame, const vector<Mat>& outs) {
 
     vector<int> indices;
     NMSBoxes(boxes, confidences, confThreshold, nmsThreshold, indices);
+    measTime=(double)(clock()-startTime)/CLOCKS_PER_SEC;
+    totalInfNumber++;
+    infTime= measTime * 1000;
+    totalInfTime+=infTime;
+    avgInfTime=totalInfTime/totalInfNumber;
     for (size_t i = 0; i < indices.size(); ++i) {
         int idx = indices[i];
         Rect box = boxes[idx];
         drawPred(classIds[idx], confidences[idx], box.x, box.y, box.x + box.width, box.y + box.height, frame);
     }
-    measTime=(double)(clock()-startTime)/CLOCKS_PER_SEC;
-    infTime= measTime * 1000;
 }
 
 
@@ -201,4 +208,10 @@ Java_com_example_moneyhelper_YoloActivity_getInfTime(JNIEnv *env, jobject thiz) 
     char infTimeString[10];
     sprintf(infTimeString,"%.0f ms",infTime);
     return (*env).NewStringUTF(infTimeString);
+}extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_example_moneyhelper_YoloActivity_getAvgInfTime(JNIEnv *env, jobject thiz) {
+    char avgInfTimeString[10];
+    sprintf(avgInfTimeString, "%.0f ms", avgInfTime);
+    return (*env).NewStringUTF(avgInfTimeString);
 }
