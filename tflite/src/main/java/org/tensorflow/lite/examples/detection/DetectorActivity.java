@@ -51,7 +51,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final Logger LOGGER = new Logger();
 
   // Configuration values for the prepackaged SSD model.
-  private static final int TF_OD_API_INPUT_SIZE = 300;
+//  private static final int TF_OD_API_INPUT_SIZE = 300;
+  private static final int TF_OD_API_INPUT_SIZE = 416;
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
   private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
   private static final String TF_OD_API_LABELS_FILE = "labels.txt";
@@ -188,7 +189,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 infNumber++;
                 lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
                 totalProcessingTimeMs+=lastProcessingTimeMs;
-                avgProcessingTimeMs=totalProcessingTimeMs/ infNumber;
+                avgProcessingTimeMs=1.0*totalProcessingTimeMs/ infNumber;
 
 
                 cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
@@ -232,7 +233,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                             showFrameInfo(previewWidth + "x" + previewHeight);
                             showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
                             showInference(lastProcessingTimeMs + " ms");
-                            showAvgInference(avgProcessingTimeMs+" ms");
+                            showAvgInference(String.format("%.1f ms", avgProcessingTimeMs));
                             showInfNum(infNumber+"");
                           }
                         });

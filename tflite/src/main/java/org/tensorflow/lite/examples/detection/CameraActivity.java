@@ -95,9 +95,6 @@ public abstract class CameraActivity extends AppCompatActivity
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     setContentView(R.layout.tfe_od_activity_camera);
-//    Toolbar toolbar = findViewById(R.id.toolbar);
-//    setSupportActionBar(toolbar);
-//    getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     if (hasPermission()) {
       setFragment();
@@ -121,7 +118,6 @@ public abstract class CameraActivity extends AppCompatActivity
                 } else {
                   gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                //                int width = bottomSheetLayout.getMeasuredWidth();
                 int height = gestureLayout.getMeasuredHeight();
 
                 sheetBehavior.setPeekHeight(height);

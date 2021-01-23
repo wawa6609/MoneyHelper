@@ -16,7 +16,7 @@ using namespace cv;
 using namespace dnn;
 
 
-double confThreshold = 0.5;
+double confThreshold = 0.3;
 double nmsThreshold = 0.3;
 vector<string> labels;
 Scalar color;

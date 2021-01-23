@@ -31,9 +31,6 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     private val model="YOLOv4-tiny"
     private lateinit var mOpenCvCameraView: CameraBridgeViewBase
     private var enabled: Boolean = true
-//    private var frontCam: Boolean = false
-//    lateinit var enBtn: Button
-//    lateinit var camBtn: Button
     private lateinit var bottomSheetLayout: LinearLayout
     private lateinit var gestureLayout: LinearLayout
     private lateinit var sheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -82,8 +79,6 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.activity_yolo)
-//        enBtn=findViewById(R.id.enBtn)
-//        camBtn=findViewById(R.id.camBtn)
 
         mOpenCvCameraView = findViewById<CameraBridgeViewBase>(R.id.main_surface)
 
@@ -149,31 +144,6 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     }
 
 
-
-
-//    fun enable(view: View){
-//        if(enabled){
-//            enBtn.setText(R.string.enable)
-//            enabled=false
-//        } else{
-//            enBtn.setText(R.string.disable)
-//            enabled=true
-//        }
-//    }
-//
-//    fun changeCam(view: View){
-//        if(frontCam) {
-//            mOpenCvCameraView!!.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK)
-//            camBtn.setText(R.string.switch_to_front)
-//            frontCam=false
-//        } else{
-//            mOpenCvCameraView!!.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT)
-//            camBtn.setText(R.string.switch_to_back)
-//            frontCam=true
-//        }
-//
-//    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -219,16 +189,9 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {
-//        val labels=getPath("classes.txt",this)
-//        val weights=getPath("myown.onnx",this)
-//        val labels=getPath("obj.names",this)
-//        val weights=getPath("myown.weights",this)
-//        val config=getPath("myown.cfg",this)
-//        val labels=getPath("coco.names",this)
-//        val weights=getPath("yolov4-tiny.weights",this)
-//        val config=getPath("yolov4-tiny.cfg",this)
+
         val labels=getPath("obj.names", this)
-        val weights=getPath("custom_yolov4-tiny_best_107.weights", this)
+        val weights=getPath("custom_yolov4-tiny_best_168.weights", this)
         val config=getPath("custom_yolov4-tiny.cfg", this)
         initializeNet(labels, weights, config)
     }
