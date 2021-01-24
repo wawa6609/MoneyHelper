@@ -62,7 +62,7 @@ public class TFLiteObjectDetectionAPIModel implements Detector {
   private static final float IMAGE_MEAN = 127.5f;
   private static final float IMAGE_STD = 127.5f;
   // Number of threads in the java app
-  private static final int NUM_THREADS = 4;
+  private static final int NUM_THREADS = 1;
   private boolean isModelQuantized;
   // Config values.
   private int inputSize;

@@ -24,6 +24,7 @@ Net net;
 int startTime;
 double measTime;
 double infTime;
+struct timespec t1,t2;
 double avgInfTime=0;
 double totalInfTime=0;
 int totalInfNumber=0;
@@ -86,7 +87,7 @@ Java_com_example_moneyhelper_YoloActivity_objectDetection(JNIEnv *env,
 //    cv::cvtColor(mat,mat,COLOR_RGBA2RGB);
     cv::cvtColor(mat,mat,COLOR_RGBA2BGR);
     Mat blob;
-    startTime=clock();
+    clock_gettime(CLOCK_MONOTONIC, &t1);
     dnn::blobFromImage(mat, blob, 1 / 255.0, detSize, Scalar(0, 0, 0), true, false);
     net.setInput(blob);
     vector<Mat> outs;
@@ -158,9 +159,10 @@ void postprocess(Mat& frame, const vector<Mat>& outs) {
 
     vector<int> indices;
     NMSBoxes(boxes, confidences, confThreshold, nmsThreshold, indices);
-    measTime=(double)(clock()-startTime)/CLOCKS_PER_SEC;
+    clock_gettime(CLOCK_MONOTONIC, &t2);
+    measTime=1000.0*t2.tv_sec + 1e-6*t2.tv_nsec - (1000.0*t1.tv_sec + 1e-6*t1.tv_nsec);
     totalInfNumber++;
-    infTime= measTime * 1000;
+    infTime= measTime;
     totalInfTime+=infTime;
     avgInfTime=totalInfTime/totalInfNumber;
     for (size_t i = 0; i < indices.size(); ++i) {

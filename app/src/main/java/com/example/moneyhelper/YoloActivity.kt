@@ -87,6 +87,8 @@ class YoloActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
         mOpenCvCameraView.visibility = SurfaceView.VISIBLE
 
+        mOpenCvCameraView.setMaxFrameSize(640,480)
+
         mOpenCvCameraView.setCvCameraViewListener(this)
 
         apiSwitchCompat = findViewById(R.id.api_info_switch)
