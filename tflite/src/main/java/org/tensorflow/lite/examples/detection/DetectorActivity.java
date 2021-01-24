@@ -51,7 +51,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final Logger LOGGER = new Logger();
 
   // Configuration values for the prepackaged SSD model.
-//  private static final int TF_OD_API_INPUT_SIZE = 300;
   private static final int TF_OD_API_INPUT_SIZE = 416;
   private static final boolean TF_OD_API_IS_QUANTIZED = false;
   private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
