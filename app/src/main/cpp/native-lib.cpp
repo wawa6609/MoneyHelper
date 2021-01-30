@@ -31,6 +31,7 @@ int totalInfNumber=0;
 
 
 Size prevSize(640,480);
+//Size detSize(320,320);
 Size detSize(416,416);
 
 
